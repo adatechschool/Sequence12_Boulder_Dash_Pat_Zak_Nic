@@ -4,15 +4,18 @@ int fieldHeight = 800;
 int fieldWidth = 800;
 int x = 0;
 int y = 0;
-PImage mur, terre, joueur, playerWalked, boulder;
+PImage mur, terre, joueur, playerWalked, boulder, wasted, mort, diamond;
 int[][] playingField = new int[fieldHeight/sizeCell][fieldWidth/sizeCell];
-float wallChance = 0.2;
-float boulderChance = wallChance + 0.05;
+float wallChance = 0;
+float boulderChance = wallChance + 0.2;
+float diamondChance = boulderChance + 0.08;
 float gen_tile;
 int wallElement = 0;
 int dirtElement = 1;
 int boulderElement = 2;
 int walkedElement = 3;
+int diamondElement = 4;
+int maxDiamond = 6;
 
 // generate gameboard and save it in a table
 // load images
@@ -23,15 +26,20 @@ void setup() {
   terre = loadImage("terre.png");
   playerWalked = loadImage("Player_walked.jpg");
   boulder = loadImage("pierre.jpg");
+  wasted = loadImage("wasted.png");
+  diamond = loadImage("diamant.png");
 
+  int diamondCounter = 0;
   for (int i = 0; i < fieldHeight/sizeCell; i++) {
     for (int j = 0; j < fieldWidth/sizeCell; j++) {
       gen_tile = random(1);
-      print(gen_tile, " ");
       if (gen_tile < wallChance) {
         playingField[i][j] = wallElement;
       } else if (gen_tile < boulderChance) {
         playingField[i][j] = boulderElement;
+      } else if (gen_tile < diamondChance && diamondCounter < maxDiamond) {
+        playingField[i][j] = diamondElement;
+        diamondCounter++;
       } else {
         playingField[i][j] = dirtElement;
       }
@@ -52,14 +60,18 @@ void draw() {
         image(terre, x, y, sizeCell, sizeCell);
       } else if (playingField[i][j] == walkedElement) { 
         image(playerWalked, x, y, sizeCell, sizeCell);
-      } else if ( (playingField[i][j] == boulderElement)) {
+      } else if (playingField[i][j] == boulderElement) {
         image(boulder, x, y, sizeCell, sizeCell);
+      } else if (playingField[i][j] == diamondElement) {
+        image(terre, x, y, sizeCell, sizeCell);
+        image(diamond, x, y, sizeCell, sizeCell);
       }
     }
   }
   joueur = loadImage("character.png");
   image(joueur, x, y, sizeCell, sizeCell);
   checkBoulderState();
+  //image(wasted, 0, 0);
 }
 
 void keyPressed() {
@@ -108,10 +120,23 @@ void checkBoulderState() {
       playingField[x/sizeCell][y/sizeCell] = boulderElement;
        playingField[x/sizeCell][(y/sizeCell) - 2] = walkedElement;
     }
-    if (playingField[x/sizeCell + 1][(y/sizeCell) + 1] == boulderElement) {
-      playingField[x/sizeCell][y/sizeCell + 1] = boulderElement;
-      playingField[x/sizeCell][(y/sizeCell)] = walkedElement;
+    if ((playingField[x/sizeCell + 1][(y/sizeCell) - 1] == boulderElement) && (playingField[x/sizeCell + 1][y/sizeCell] == walkedElement)) {
+      int boulderX = x/sizeCell + 1;
+      int boulderY = y/sizeCell - 1;
+      int boulderYMemory = boulderY;
+      for (int i = 0; i < height/sizeCell; i++) {
+        playingField[boulderX][boulderY + 1] = boulderElement;
+        playingField[boulderX][boulderY] = walkedElement;
+        boulderY++;
+        if (playingField[boulderX][boulderY + 1] != walkedElement) {
+          boulderY = boulderYMemory;
+          //continue;
+          checkBoulderState();
+          break;
+        }
+      }
+      //playingField[x/sizeCell + 1][y/sizeCell] = boulderElement;
+      //playingField[x/sizeCell + 1][(y/sizeCell) - 1] = walkedElement;
     }
-    
   } catch(Exception e) {}
 }
