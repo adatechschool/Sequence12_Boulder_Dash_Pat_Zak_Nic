@@ -2,9 +2,9 @@
 int sizeCell = 40;
 PImage mur, terre, joueur, playerWalked, boulder, wasted, mort, diamond, door;
 int[][] playingField;
-float wallChance = 0.1;
-float boulderChance = wallChance + 0.2;
-float diamondChance = boulderChance + 0.08;
+float wallChance = 0.2;
+float boulderChance = wallChance + 0.1;
+float diamondChance = boulderChance + 0.02;
 float gen_tile;
 int wallElement = 0;
 int dirtElement = 1;
@@ -12,9 +12,9 @@ int boulderElement = 2;
 int walkedElement = 3;
 int diamondElement = 4;
 int doorElement = 5;
-int maxDiamond = 6;
 boolean isDead = false;
 int x, y;
+boolean playerWalked_Door = false;
 
 // generate gameboard and save it in a table
 // load images
@@ -42,7 +42,7 @@ void setup() {
         playingField[i][j] = wallElement;
       } else if (gen_tile < boulderChance) {
         playingField[i][j] = boulderElement;
-      } else if (gen_tile < diamondChance && diamondCounter < maxDiamond) {
+      } else if (gen_tile < diamondChance) {
         playingField[i][j] = diamondElement;
         diamondCounter++;
       } else {
@@ -51,6 +51,7 @@ void setup() {
     }
   }
   playingField[0][0] = walkedElement;
+  playingField[(height/sizeCell) - 1][(width/sizeCell) - 1] = doorElement;
 }
 
 void draw() {
@@ -70,6 +71,9 @@ void draw() {
       } else if (playingField[i][j] == diamondElement) {
         image(terre, x, y, sizeCell, sizeCell);
         image(diamond, x, y, sizeCell, sizeCell);
+      } else if (playingField[i][j] == doorElement) {
+        image(terre, x, y, sizeCell, sizeCell);
+        image(door, x, y, sizeCell, sizeCell);
       }
     }
   }
@@ -79,6 +83,9 @@ void draw() {
     image(wasted, 0, 0);
   }  
   checkBoulderState();
+  if (playingField[x/sizeCell][y/sizeCell] == doorElement) {
+    setup();
+  }
 }
 
 void keyPressed() {
@@ -97,7 +104,9 @@ void keyPressed() {
       }
       x += sizeCell;
       joueur = loadImage("characterright.png");
-      playingField[x/sizeCell][y/sizeCell] = walkedElement;
+      if (playingField[x/sizeCell][y/sizeCell] != doorElement) {
+        playingField[x/sizeCell][y/sizeCell] = walkedElement;
+      }
     }
   } else if (keyCode == LEFT) {
     if (x > 0) {
@@ -106,7 +115,9 @@ void keyPressed() {
       }
       x -= sizeCell;
       joueur = loadImage("characterleft.png");
-      playingField[x/sizeCell][y/sizeCell] = walkedElement;
+      if (playingField[x/sizeCell][y/sizeCell] != doorElement) {
+        playingField[x/sizeCell][y/sizeCell] = walkedElement;
+      }
     }
   } else if (keyCode == DOWN) {
     if (y < height - sizeCell) {
@@ -114,7 +125,9 @@ void keyPressed() {
         return;
       }
       y += sizeCell;
-      playingField[x/sizeCell][y/sizeCell] = walkedElement;
+      if (playingField[x/sizeCell][y/sizeCell] != doorElement) {
+        playingField[x/sizeCell][y/sizeCell] = walkedElement;
+      }
     }
   } else if (keyCode == UP) {
     if (y > 0) {
@@ -122,7 +135,9 @@ void keyPressed() {
         return;
       }
       y -= sizeCell;
-      playingField[x/sizeCell][y/sizeCell] = walkedElement;
+      if (playingField[x/sizeCell][y/sizeCell] != doorElement) {
+        playingField[x/sizeCell][y/sizeCell] = walkedElement;
+      }
     }  
   }
 }
