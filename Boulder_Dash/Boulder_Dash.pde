@@ -1,7 +1,5 @@
 // initialize variables 
 int sizeCell = 80;
-int x = 0;
-int y = 0;
 PImage mur, terre, joueur, playerWalked, boulder, wasted, mort, diamond;
 int[][] playingField;
 float wallChance = 0.1;
@@ -15,6 +13,7 @@ int walkedElement = 3;
 int diamondElement = 4;
 int maxDiamond = 6;
 boolean isDead = false;
+int x, y;
 
 // generate gameboard and save it in a table
 // load images
@@ -30,6 +29,8 @@ void setup() {
   wasted = loadImage("wasted.png");
   diamond = loadImage("diamant.png");
   joueur = loadImage("character.png");
+  x = 0;
+  y = 0;
 
   int diamondCounter = 0;
   for (int i = 0; i < width/sizeCell; i++) {
@@ -72,15 +73,9 @@ void draw() {
   }
   
   image(joueur, x, y, sizeCell, sizeCell);
-  
   if (isDead) {
     image(wasted, 0, 0);
-    isDead = false;
-    noLoop();
-  }
-  //if (isDead == false) {
-  //  loop();
-  //}
+  }  
   checkBoulderState();
 }
 
@@ -93,7 +88,6 @@ void keyPressed() {
       x += sizeCell;
       playingField[x/sizeCell][y/sizeCell] = walkedElement;
     }
-    keyPressed = false;
   } else if (keyCode == LEFT) {
     if (x > 0) {
       if ((playingField[(x/sizeCell) - 1][y/sizeCell] == wallElement) || (playingField[(x/sizeCell) - 1][y/sizeCell] == boulderElement)) {
@@ -102,7 +96,6 @@ void keyPressed() {
       x -= sizeCell;
       playingField[x/sizeCell][y/sizeCell] = walkedElement;
     }
-    keyPressed = false;
   } else if (keyCode == DOWN) {
     if (y < height - sizeCell) {
       if ((playingField[x/(sizeCell)][(y/sizeCell) + 1] == wallElement) || (playingField[x/(sizeCell)][(y/sizeCell) + 1] == boulderElement)) {
@@ -111,7 +104,6 @@ void keyPressed() {
       y += sizeCell;
       playingField[x/sizeCell][y/sizeCell] = walkedElement;
     }
-    keyPressed = false;
   } else if (keyCode == UP) {
     if (y > 0) {
       if ((playingField[x/(sizeCell)][(y/sizeCell) - 1] == wallElement) || (playingField[x/(sizeCell)][(y/sizeCell) - 1] == boulderElement)){
@@ -120,7 +112,10 @@ void keyPressed() {
       y -= sizeCell;
       playingField[x/sizeCell][y/sizeCell] = walkedElement;
     }  
-    keyPressed = false;
+  }
+  if (keyCode == ENTER) {
+    setup();
+    isDead = false;
   }
 }
 
