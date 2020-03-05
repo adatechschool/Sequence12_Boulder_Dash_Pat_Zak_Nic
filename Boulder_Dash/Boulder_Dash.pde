@@ -1,6 +1,6 @@
 // initialize variables 
-int sizeCell = 80;
-PImage mur, terre, joueur, playerWalked, boulder, wasted, mort, diamond;
+int sizeCell = 40;
+PImage mur, terre, joueur, playerWalked, boulder, wasted, mort, diamond, door;
 int[][] playingField;
 float wallChance = 0.1;
 float boulderChance = wallChance + 0.2;
@@ -11,6 +11,7 @@ int dirtElement = 1;
 int boulderElement = 2;
 int walkedElement = 3;
 int diamondElement = 4;
+int doorElement = 5;
 int maxDiamond = 6;
 boolean isDead = false;
 int x, y;
@@ -28,7 +29,8 @@ void setup() {
   boulder = loadImage("pierre.jpg");
   wasted = loadImage("wasted.png");
   diamond = loadImage("diamant.png");
-  joueur = loadImage("character.png");
+  joueur = loadImage("characterright.png");
+  door = loadImage("porte.png");
   x = 0;
   y = 0;
 
@@ -80,12 +82,21 @@ void draw() {
 }
 
 void keyPressed() {
+  if (keyCode == ENTER) {
+    setup();
+    isDead = false;
+  }
+  
+  if (isDead) {
+    return;
+  }
   if (keyCode == RIGHT) {
     if (x < width - sizeCell) {
       if ((playingField[(x/sizeCell) + 1][y/sizeCell] == wallElement) || (playingField[(x/sizeCell) + 1][y/sizeCell] == boulderElement)) {
         return;
       }
       x += sizeCell;
+      joueur = loadImage("characterright.png");
       playingField[x/sizeCell][y/sizeCell] = walkedElement;
     }
   } else if (keyCode == LEFT) {
@@ -94,6 +105,7 @@ void keyPressed() {
         return;
       }
       x -= sizeCell;
+      joueur = loadImage("characterleft.png");
       playingField[x/sizeCell][y/sizeCell] = walkedElement;
     }
   } else if (keyCode == DOWN) {
@@ -113,10 +125,6 @@ void keyPressed() {
       playingField[x/sizeCell][y/sizeCell] = walkedElement;
     }  
   }
-  if (keyCode == ENTER) {
-    setup();
-    isDead = false;
-  }
 }
 
 void checkBoulderState() {
@@ -130,22 +138,8 @@ void checkBoulderState() {
        }
          
     }
-    if ((playingField[x/sizeCell + 1][(y/sizeCell) - 1] == boulderElement) && (playingField[x/sizeCell + 1][y/sizeCell] == walkedElement)) {
-      int boulderX = x/sizeCell + 1;
-      int boulderY = y/sizeCell - 1;
-      int boulderYMemory = boulderY;
-      for (int i = 0; i < height/sizeCell; i++) {
-        playingField[boulderX][boulderY + 1] = boulderElement;
-        playingField[boulderX][boulderY] = walkedElement;
-        boulderY++;
-        if (playingField[boulderX][boulderY + 1] != walkedElement) {
-          //boulderY = boulderYMemory;
-          //continue;
-          //checkBoulderState();
-          break;
-        }
-      }
-    }
+  } catch(Exception e) {}
+  try {
     if ((playingField[x/sizeCell - 1][(y/sizeCell) - 1] == boulderElement) && (playingField[x/sizeCell - 1][y/sizeCell] == walkedElement)) {
       int boulderX = x/sizeCell - 1;
       int boulderY = y/sizeCell - 1;
@@ -155,14 +149,27 @@ void checkBoulderState() {
         playingField[boulderX][boulderY] = walkedElement;
         boulderY++;
         if (playingField[boulderX][boulderY + 1] != walkedElement) {
-          //boulderY = boulderYMemory;
-          //continue;
           checkBoulderState();
           break;
         }
       }
     }
   } catch(Exception e) {}
+  try {
+      if ((playingField[x/sizeCell + 1][(y/sizeCell) - 1] == boulderElement) && (playingField[x/sizeCell + 1][y/sizeCell] == walkedElement)) {
+      int boulderX = x/sizeCell + 1;
+      int boulderY = y/sizeCell - 1;
+      int boulderYMemory = boulderY;
+      for (int i = 0; i < height/sizeCell; i++) {
+        playingField[boulderX][boulderY + 1] = boulderElement;
+        playingField[boulderX][boulderY] = walkedElement;
+        boulderY++;
+        if (playingField[boulderX][boulderY + 1] != walkedElement) {
+          break;
+        }
+      }
+    }
+  } catch (Exception e) {}
 }
 
 void reset() {
