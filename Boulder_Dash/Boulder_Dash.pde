@@ -29,6 +29,7 @@ void setup() {
   boulder = loadImage("pierre.jpg");
   wasted = loadImage("wasted.png");
   diamond = loadImage("diamant.png");
+  joueur = loadImage("character.png");
 
   int diamondCounter = 0;
   for (int i = 0; i < width/sizeCell; i++) {
@@ -69,13 +70,17 @@ void draw() {
       }
     }
   }
-  joueur = loadImage("character.png");
+  
   image(joueur, x, y, sizeCell, sizeCell);
   
-  if (isDead == true) {
+  if (isDead) {
     image(wasted, 0, 0);
+    isDead = false;
     noLoop();
   }
+  //if (isDead == false) {
+  //  loop();
+  //}
   checkBoulderState();
 }
 
@@ -126,6 +131,7 @@ void checkBoulderState() {
        playingField[x/sizeCell][(y/sizeCell) - 2] = walkedElement;
        if (playingField[x/sizeCell][(y/sizeCell)] == boulderElement) {
          isDead = true;
+         joueur = loadImage("mort.png");
        }
          
     }
@@ -154,14 +160,14 @@ void checkBoulderState() {
         playingField[boulderX][boulderY] = walkedElement;
         boulderY++;
         if (playingField[boulderX][boulderY + 1] != walkedElement) {
-          boulderY = boulderYMemory;
+          //boulderY = boulderYMemory;
           //continue;
           checkBoulderState();
           break;
         }
       }
     }
-  } //catch(Exception e) {}
+  } catch(Exception e) {}
 }
 
 void reset() {
