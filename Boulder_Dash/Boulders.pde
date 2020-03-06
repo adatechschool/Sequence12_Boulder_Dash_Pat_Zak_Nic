@@ -1,3 +1,5 @@
+int boulderDestroyedCounter;
+
 class Boulder {
   
   void boulderBehave() {
@@ -25,10 +27,11 @@ class Boulder {
         int boulderX = x/sizeCell - 1;
         int boulderY = y/sizeCell - 1;
         for (int i = 0; i < height/sizeCell; i++) {
-          playingField[boulderX][boulderY + 1] = boulderElement;
+          playingField[boulderX][boulderY + 1] = boulderDestroyedElement;
           playingField[boulderX][boulderY] = walkedElement;
           boulderY++;
-          if (playingField[boulderX][boulderY + 1] != walkedElement) {            checkBoulderState();
+          boulderDestroyedCounter++;
+          if (playingField[boulderX][boulderY + 1] != walkedElement) {
             break;
           }
         }
@@ -42,9 +45,10 @@ class Boulder {
         int boulderX = x/sizeCell + 1;
         int boulderY = y/sizeCell - 1;
         for (int i = 0; i < height/sizeCell; i++) {
-          playingField[boulderX][boulderY + 1] = boulderElement;
+          playingField[boulderX][boulderY + 1] = boulderDestroyedElement;
           playingField[boulderX][boulderY] = walkedElement;
           boulderY++;
+          boulderDestroyedCounter++;
           if (playingField[boulderX][boulderY + 1] != walkedElement) {
             break;
           }
