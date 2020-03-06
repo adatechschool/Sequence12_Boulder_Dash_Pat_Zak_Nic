@@ -30,11 +30,11 @@ class Boulder {
           playingField[boulderX][boulderY + 1] = boulderDestroyedElement;
           playingField[boulderX][boulderY] = walkedElement;
           boulderY++;
-          boulderDestroyedCounter++;
           if (playingField[boulderX][boulderY + 1] != walkedElement) {
             break;
           }
         }
+        boulderDestroyedCounter++;
       }
     } catch(Exception e) {}
   }
@@ -48,11 +48,11 @@ class Boulder {
           playingField[boulderX][boulderY + 1] = boulderDestroyedElement;
           playingField[boulderX][boulderY] = walkedElement;
           boulderY++;
-          boulderDestroyedCounter++;
           if (playingField[boulderX][boulderY + 1] != walkedElement) {
             break;
           }
         }
+        boulderDestroyedCounter++;
       }
     } catch (Exception e) {}
   }

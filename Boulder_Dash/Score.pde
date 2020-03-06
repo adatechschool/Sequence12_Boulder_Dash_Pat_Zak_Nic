@@ -16,7 +16,7 @@ class Score {
     String boulderPoints = boulderDestroyedCounter + " Boulders destroyed !";
     textFont(diamondpoints, 100);
     fill(0, 0, 0);
-    text(boulderPoints, width/15, height - 60);  
+    text(boulderPoints, width/15, height - 80);  
   }
 }
 

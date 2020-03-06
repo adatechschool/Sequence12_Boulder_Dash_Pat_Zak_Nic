@@ -1,6 +1,6 @@
 // initialize variables 
 int sizeCell = 50;
-PImage mur, terre, joueur, playerWalked, boulder, wasted, mort, diamond, door, boulderDestroyed;
+PImage mur, terre, joueur, playerWalked, boulder, wasted, mort, diamond, door, boulderDestroyed, start;
 PFont diamondpoints;
 int[][] playingField;
 float wallChance = 0.2;
@@ -19,6 +19,7 @@ int x, y;
 boolean playerWalked_Door = false;
 float diamondCounter;
 int diamondCollected;
+boolean gameState;
 
 
 
@@ -26,8 +27,10 @@ int diamondCollected;
 // generate gameboard and save it in a table
 // load images
 void setup() {
+  gameState = false;
   boulderBehaviour = new Boulder();
   printAllScore = new Score();
+  drawBoard = new Draw_Board();
   diamondCounter= 0;
   boulderDestroyedCounter = 0;
   diamondCollected = 0;
@@ -44,12 +47,12 @@ void setup() {
   diamond = loadImage("Sprites/diamant.png");
   joueur = loadImage("Sprites/characterright.png");
   door = loadImage("Sprites/porte.png");
+  start = loadImage("Sprites/icyboulderdash.jpg");
   diamondpoints = createFont("data/game_over.ttf", 32);
 
   x = 0;
   y = 0;
 
- 
   for (int i = 0; i < width/sizeCell; i++) {
     for (int j = 0; j < height/sizeCell; j++) {
       gen_tile = random(1);
@@ -70,122 +73,24 @@ void setup() {
 }
 
 void draw() {
-  for (int i = 0; i < width/sizeCell; i++) {
-    for (int j = 0; j < height/sizeCell; j++) {
-      int x = i*sizeCell;
-      int y = j*sizeCell;
-      checkBoulderState();
-      if (playingField[i][j] == wallElement) {
-        image(mur, x, y, sizeCell, sizeCell);
-      } else if (playingField[i][j] == dirtElement) { 
-        image(terre, x, y, sizeCell, sizeCell);
-      } else if (playingField[i][j] == walkedElement) { 
-        image(playerWalked, x, y, sizeCell, sizeCell);
-      } else if (playingField[i][j] == boulderElement) {
-        image(boulder, x, y, sizeCell, sizeCell);
-      } else if (playingField[i][j] == diamondElement) {
-        image(terre, x, y, sizeCell, sizeCell);
-        image(diamond, x, y, sizeCell, sizeCell);
-      } else if (playingField[i][j] == doorElement) {
-        image(terre, x, y, sizeCell, sizeCell);
-        image(door, x, y, sizeCell, sizeCell);
-      } else if (playingField[i][j] == boulderDestroyedElement) {
-        image(boulderDestroyed, x, y, sizeCell, sizeCell);
-      }
-    }
+
+  if (gameState) {
+    boulderBehaviour.boulderBehave();
+    drawBoard.mainDraw();
+    printAllScore.printScore();
+  } else {
+    image(start, 0, 0, width, height);
   }
-  print(boulderDestroyedCounter);
-  image(joueur, x, y, sizeCell, sizeCell);
-  if (isDead) {
-    image(wasted, 0, 0);
-  }  
   
-   boulderBehaviour.boulderBehave();
-   printAllScore.printScore();
-   
+  
+  
   if (playingField[x/sizeCell][y/sizeCell] == doorElement && diamondCounter*0.80 <= diamondCollected) {
     setup();
   }
-
-
 }
-
-
-void keyPressed() {
-  if (keyCode == ENTER) {
-    setup();
-    isDead = false;
-  }
-  
-  if (isDead) {
-    return;
-  }
-  if (keyCode == RIGHT) {
-    if (x < width - sizeCell) {
-      if ((playingField[(x/sizeCell) + 1][y/sizeCell] == wallElement) || (playingField[(x/sizeCell) + 1][y/sizeCell] == boulderElement)) {
-        return; 
-      }
-      x += sizeCell;
-      diamondCollected();
-      joueur = loadImage("Sprites/characterright.png");
-      if (playingField[x/sizeCell][y/sizeCell] != doorElement) {
-        playingField[x/sizeCell][y/sizeCell] = walkedElement;
-      }
-    }
-  } else if (keyCode == LEFT) {
-    if (x > 0) {
-      if ((playingField[(x/sizeCell) - 1][y/sizeCell] == wallElement) || (playingField[(x/sizeCell) - 1][y/sizeCell] == boulderElement)) {
-        return;
-      }
-      x -= sizeCell;
-      diamondCollected();
-      joueur = loadImage("Sprites/characterleft.png");
-      if (playingField[x/sizeCell][y/sizeCell] != doorElement) {
-        playingField[x/sizeCell][y/sizeCell] = walkedElement;
-      }
-    }
-  } else if (keyCode == DOWN) {
-    if (y < height - sizeCell) {
-      if ((playingField[x/(sizeCell)][(y/sizeCell) + 1] == wallElement) || (playingField[x/(sizeCell)][(y/sizeCell) + 1] == boulderElement)) {
-        return;
-      }
-      y += sizeCell;
-      diamondCollected();
-      if (playingField[x/sizeCell][y/sizeCell] != doorElement) {
-        playingField[x/sizeCell][y/sizeCell] = walkedElement;
-      }
-    }
-  } else if (keyCode == UP) {
-    if (y > 0) {
-      if ((playingField[x/(sizeCell)][(y/sizeCell) - 1] == wallElement) || (playingField[x/(sizeCell)][(y/sizeCell) - 1] == boulderElement)){
-        return;
-      }
-      y -= sizeCell;
-      diamondCollected();
-      if (playingField[x/sizeCell][y/sizeCell] != doorElement) {
-        playingField[x/sizeCell][y/sizeCell] = walkedElement;
-      }
-    }  
-  }
-}
-
-
-
 
 void diamondCollected() {
   if (playingField[x/sizeCell][(y/sizeCell)] == diamondElement) {
     diamondCollected++;
   }  
-}
-
-
-
-
-
-
-
-void checkBoulderState() {
-  
-  
-  
 }
