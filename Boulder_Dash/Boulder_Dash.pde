@@ -20,24 +20,26 @@ float diamondCounter;
 int diamondCollected;
 
 
+
 // generate gameboard and save it in a table
 // load images
 void setup() {
+  boulderBehaviour = new Boulder();
   diamondCounter= 0;
   diamondCollected = 0;
   //print(width/sizeCell, " ",height/sizeCell);
   size(800, 800);
   background(0);
   playingField = new int[width/sizeCell][height/sizeCell];
-  mur = loadImage("mur.png");
-  terre = loadImage("terre.png");
-  playerWalked = loadImage("Player_walked.jpg");
-  boulder = loadImage("pierre.jpg");
-  wasted = loadImage("wasted.png");
-  diamond = loadImage("diamant.png");
-  joueur = loadImage("characterright.png");
-  door = loadImage("porte.png");
-  diamondpoints = createFont("Arial", 20, true);
+  mur = loadImage("Sprites/mur.png");
+  terre = loadImage("Sprites/terre.png");
+  playerWalked = loadImage("Sprites/Player_walked.jpg");
+  boulder = loadImage("Sprites/pierre.jpg");
+  wasted = loadImage("Sprites/wasted.png");
+  diamond = loadImage("Sprites/diamant.png");
+  joueur = loadImage("Sprites/characterright.png");
+  door = loadImage("Sprites/porte.png");
+  diamondpoints = createFont("data/game_over.ttf", 32);
 
   x = 0;
   y = 0;
@@ -90,13 +92,14 @@ void draw() {
   if (isDead) {
     image(wasted, 0, 0);
   }  
-  checkBoulderState();
+  
+  boulderBehaviour.boulderBehave();
   if (playingField[x/sizeCell][y/sizeCell] == doorElement && diamondCounter*0.80 <= diamondCollected) {
     setup();
   }
 
   String textePoints = diamondCollected + " Diamonds collected !";
-  textFont(diamondpoints);
+  textFont(diamondpoints, 100);
   fill(0, 0, 0);
   text(textePoints, width/15, height - 40);
 }
@@ -118,7 +121,7 @@ void keyPressed() {
       }
       x += sizeCell;
       diamondCollected();
-      joueur = loadImage("characterright.png");
+      joueur = loadImage("Sprites/characterright.png");
       if (playingField[x/sizeCell][y/sizeCell] != doorElement) {
         playingField[x/sizeCell][y/sizeCell] = walkedElement;
       }
@@ -130,7 +133,7 @@ void keyPressed() {
       }
       x -= sizeCell;
       diamondCollected();
-      joueur = loadImage("characterleft.png");
+      joueur = loadImage("Sprites/characterleft.png");
       if (playingField[x/sizeCell][y/sizeCell] != doorElement) {
         playingField[x/sizeCell][y/sizeCell] = walkedElement;
       }
@@ -176,44 +179,7 @@ void diamondCollected() {
 
 
 void checkBoulderState() {
-  try {
-    if ((playingField[x/sizeCell][(y/sizeCell) - 2] == boulderElement) && (playingField[x/sizeCell][(y/sizeCell) - 1] == walkedElement)) {
-      playingField[x/sizeCell][y/sizeCell] = boulderElement;
-       playingField[x/sizeCell][(y/sizeCell) - 2] = walkedElement;
-       if (playingField[x/sizeCell][(y/sizeCell)] == boulderElement) {
-         isDead = true;
-         joueur = loadImage("mort.png");
-       }
-         
-    }
-  } catch(Exception e) {}
-  try {
-    if ((playingField[x/sizeCell - 1][(y/sizeCell) - 1] == boulderElement) && (playingField[x/sizeCell - 1][y/sizeCell] == walkedElement)) {
-      int boulderX = x/sizeCell - 1;
-      int boulderY = y/sizeCell - 1;
-      for (int i = 0; i < height/sizeCell; i++) {
-        playingField[boulderX][boulderY + 1] = boulderElement;
-        playingField[boulderX][boulderY] = walkedElement;
-        boulderY++;
-        if (playingField[boulderX][boulderY + 1] != walkedElement) {
-          checkBoulderState();
-          break;
-        }
-      }
-    }
-  } catch(Exception e) {}
-  try {
-      if ((playingField[x/sizeCell + 1][(y/sizeCell) - 1] == boulderElement) && (playingField[x/sizeCell + 1][y/sizeCell] == walkedElement)) {
-      int boulderX = x/sizeCell + 1;
-      int boulderY = y/sizeCell - 1;
-      for (int i = 0; i < height/sizeCell; i++) {
-        playingField[boulderX][boulderY + 1] = boulderElement;
-        playingField[boulderX][boulderY] = walkedElement;
-        boulderY++;
-        if (playingField[boulderX][boulderY + 1] != walkedElement) {
-          break;
-        }
-      }
-    }
-  } catch (Exception e) {}
+  
+  
+  
 }
