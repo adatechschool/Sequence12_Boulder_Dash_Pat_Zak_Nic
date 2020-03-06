@@ -1,10 +1,11 @@
 // initialize variables 
-int sizeCell = 40;
+int sizeCell = 50;
 PImage mur, terre, joueur, playerWalked, boulder, wasted, mort, diamond, door;
+PFont diamondpoints;
 int[][] playingField;
 float wallChance = 0.2;
 float boulderChance = wallChance + 0.1;
-float diamondChance = boulderChance + 0.02;
+float diamondChance = boulderChance + 0.04;
 float gen_tile;
 int wallElement = 0;
 int dirtElement = 1;
@@ -15,10 +16,15 @@ int doorElement = 5;
 boolean isDead = false;
 int x, y;
 boolean playerWalked_Door = false;
+float diamondCounter;
+int diamondCollected;
+
 
 // generate gameboard and save it in a table
 // load images
 void setup() {
+  diamondCounter= 0;
+  diamondCollected = 0;
   //print(width/sizeCell, " ",height/sizeCell);
   size(800, 800);
   background(0);
@@ -31,10 +37,12 @@ void setup() {
   diamond = loadImage("diamant.png");
   joueur = loadImage("characterright.png");
   door = loadImage("porte.png");
+  diamondpoints = createFont("Arial", 20, true);
+
   x = 0;
   y = 0;
 
-  int diamondCounter = 0;
+ 
   for (int i = 0; i < width/sizeCell; i++) {
     for (int j = 0; j < height/sizeCell; j++) {
       gen_tile = random(1);
@@ -83,10 +91,16 @@ void draw() {
     image(wasted, 0, 0);
   }  
   checkBoulderState();
-  if (playingField[x/sizeCell][y/sizeCell] == doorElement) {
+  if (playingField[x/sizeCell][y/sizeCell] == doorElement && diamondCounter*0.80 <= diamondCollected) {
     setup();
   }
+
+  String textePoints = diamondCollected + " Diamonds collected !";
+  textFont(diamondpoints);
+  fill(0, 0, 0);
+  text(textePoints, width/15, height - 40);
 }
+
 
 void keyPressed() {
   if (keyCode == ENTER) {
@@ -100,9 +114,10 @@ void keyPressed() {
   if (keyCode == RIGHT) {
     if (x < width - sizeCell) {
       if ((playingField[(x/sizeCell) + 1][y/sizeCell] == wallElement) || (playingField[(x/sizeCell) + 1][y/sizeCell] == boulderElement)) {
-        return;
+        return; 
       }
       x += sizeCell;
+      diamondCollected();
       joueur = loadImage("characterright.png");
       if (playingField[x/sizeCell][y/sizeCell] != doorElement) {
         playingField[x/sizeCell][y/sizeCell] = walkedElement;
@@ -114,6 +129,7 @@ void keyPressed() {
         return;
       }
       x -= sizeCell;
+      diamondCollected();
       joueur = loadImage("characterleft.png");
       if (playingField[x/sizeCell][y/sizeCell] != doorElement) {
         playingField[x/sizeCell][y/sizeCell] = walkedElement;
@@ -125,6 +141,7 @@ void keyPressed() {
         return;
       }
       y += sizeCell;
+      diamondCollected();
       if (playingField[x/sizeCell][y/sizeCell] != doorElement) {
         playingField[x/sizeCell][y/sizeCell] = walkedElement;
       }
@@ -135,12 +152,28 @@ void keyPressed() {
         return;
       }
       y -= sizeCell;
+      diamondCollected();
       if (playingField[x/sizeCell][y/sizeCell] != doorElement) {
         playingField[x/sizeCell][y/sizeCell] = walkedElement;
       }
     }  
   }
 }
+
+
+
+
+void diamondCollected() {
+  if (playingField[x/sizeCell][(y/sizeCell)] == diamondElement) {
+    diamondCollected++;
+  }  
+}
+
+
+
+
+
+
 
 void checkBoulderState() {
   try {
@@ -158,7 +191,6 @@ void checkBoulderState() {
     if ((playingField[x/sizeCell - 1][(y/sizeCell) - 1] == boulderElement) && (playingField[x/sizeCell - 1][y/sizeCell] == walkedElement)) {
       int boulderX = x/sizeCell - 1;
       int boulderY = y/sizeCell - 1;
-      int boulderYMemory = boulderY;
       for (int i = 0; i < height/sizeCell; i++) {
         playingField[boulderX][boulderY + 1] = boulderElement;
         playingField[boulderX][boulderY] = walkedElement;
@@ -174,7 +206,6 @@ void checkBoulderState() {
       if ((playingField[x/sizeCell + 1][(y/sizeCell) - 1] == boulderElement) && (playingField[x/sizeCell + 1][y/sizeCell] == walkedElement)) {
       int boulderX = x/sizeCell + 1;
       int boulderY = y/sizeCell - 1;
-      int boulderYMemory = boulderY;
       for (int i = 0; i < height/sizeCell; i++) {
         playingField[boulderX][boulderY + 1] = boulderElement;
         playingField[boulderX][boulderY] = walkedElement;
@@ -185,8 +216,4 @@ void checkBoulderState() {
       }
     }
   } catch (Exception e) {}
-}
-
-void reset() {
-  //reset board  
 }
