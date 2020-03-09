@@ -25,6 +25,7 @@ class Draw_Board {
           image(terre, x_draw, y_draw, sizeCell, sizeCell);
           image(door, x_draw, y_draw, sizeCell, sizeCell);
         } else if (playingField[i][j] == boulderDestroyedElement) {
+          image(playerWalked, x_draw, y_draw, sizeCell, sizeCell);
           image(boulderDestroyed, x_draw, y_draw, sizeCell, sizeCell);
         }
       }
